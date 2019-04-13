@@ -61,7 +61,7 @@ class StationData(UnicodeMixin):
             if 'precip_accum_local_yesterday' not in self.json['obs'][0]:
                 precip_accum_local_yesterday = 0
             else:
-                precip_accum_local_yesterday = Conversion.volume(float(self.json['obs'][0]['precip_accum_local_yesterday'], self.units)
+                precip_accum_local_yesterday = Conversion.volume(float(self.json['obs'][0]['precip_accum_local_yesterday']), self.units)
 
         # If AIR module is present convert values else 0
         if 'air_temperature' not in self.json['obs'][0]:
