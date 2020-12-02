@@ -1,10 +1,11 @@
 # pySmartWeatherIO
 Wrapper for the WeatherFlow Smart Weather REST API. Designed to work with Home Assistant.
 
-This module communicates with a Smart Home Weather station from the company [WeatherFlow](http://weatherflow.com/smart-home-weather-stations/) using their REST API. It retrieves current weather data from the attached units. Currently they have two types of Units:
+This module communicates with a Smart Home Weather station from the company [WeatherFlow](http://weatherflow.com/smart-home-weather-stations/) using their REST API. It retrieves current weather data from the attached units. Currently they have three types of Units:
 * **AIR** - This unit measures Temperature, Humidity, Pressure and Lightning Strikes
 * **SKY** - This unit measures Precipitation, Wind, Illuminance and UV
 They are both attached to a central hub, that broadcasts the data via UDP and sends the data to a cloud database managed by WeatherFlow. This module retrieves the data back from the cloud database.
+* **TEMPEST** - This is a combination of the features from the AIR and SKY units, in to one single device.
 
 ## Functions
 The module exposes the following functions:<br>
