@@ -16,7 +16,6 @@ from pysmartweatherio.const import (
     DEFAULT_TIMEOUT,
     DEVICE_TYPE_AIR,
     DEVICE_TYPE_SKY,
-    DEVICE_TYPE_TEMPEST,
     DEVICE_TYPES,
     UNIT_SYSTEM_METRIC,
     UNIT_TEMP_CELCIUS,
@@ -138,7 +137,7 @@ class SmartWeather:
 
     async def _station_information(self) -> None:
         """Return Information about the station HW."""
-        endpoint = f"stations/{self._station_id}?api_key={self._api_key}"
+        endpoint = f"stations/{self._station_id}?token={self._api_key}"
         json_data = await self.async_request("get", endpoint)
         
         for row in json_data["stations"]:
@@ -190,14 +189,14 @@ class SmartWeather:
 
     async def _station_name_by_station_id(self) -> None:
         """Return Station name from the Station ID."""
-        endpoint = f"observations/station/{self._station_id}?api_key={self._api_key}"
+        endpoint = f"observations/station/{self._station_id}?token={self._api_key}"
         json_data = await self.async_request("get", endpoint)
 
         return self._station_id if json_data.get("station_name") is None else json_data.get("station_name")
 
     async def _current_station_data(self) -> None:
         """Return current observation data for the Station."""
-        endpoint = f"observations/station/{self._station_id}?api_key={self._api_key}"
+        endpoint = f"observations/station/{self._station_id}?token={self._api_key}"
         json_data = await self.async_request("get", endpoint)
 
         station_name = json_data.get("station_name")
@@ -263,7 +262,7 @@ class SmartWeather:
             await self._station_information()
 
         cnv = ConversionFunctions()
-        endpoint = f"better_forecast?station_id={self._station_id}&api_key={self._api_key}&lat={self._latitude}&lon={self._longitude}"
+        endpoint = f"better_forecast?station_id={self._station_id}&token={self._api_key}&lat={self._latitude}&lon={self._longitude}"
         json_data = await self.async_request("get", endpoint)
         items = []
 
@@ -406,7 +405,7 @@ class SmartWeather:
             await self._station_information()
 
         cnv = ConversionFunctions()
-        endpoint = f"better_forecast?station_id={self._station_id}&api_key={self._api_key}&lat={self._latitude}&lon={self._longitude}"
+        endpoint = f"better_forecast?station_id={self._station_id}&token={self._api_key}&lat={self._latitude}&lon={self._longitude}"
         json_data = await self.async_request("get", endpoint)
         items = []
 
