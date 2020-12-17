@@ -483,3 +483,62 @@ class ForecastDataHourly:
     def temp_low_today(self) -> float:
         """Return Low temperature for current day."""
         return self._temp_low_today
+
+class DeviceData:
+    """A representation of Devices attached to the station."""
+
+    def __init__(self, data):
+        self._timestamp = data["obs_time"]
+        self._device_type = data["device_type"]
+        self._device_type_desc = data["device_type_desc"]
+        self._device_name = data["device_name"]
+        self._device_id = data["device_id"]
+        self._battery = data["battery"]
+        self._serial_number = data["serial_number"]
+        self._firmware_revision = data["firmware_revision"]
+        self._hardware_revision = data["hardware_revision"]
+
+    @property
+    def timestamp(self) -> dt:
+        """Return observation time."""
+        return self._timestamp.isoformat()
+
+    @property
+    def device_type(self) -> str:
+        """Returns Device Type."""
+        return self._device_type
+
+    @property
+    def device_type_desc(self) -> str:
+        """Returns Device Type Description."""
+        return self._device_type_desc
+
+    @property
+    def device_name(self) -> str:
+        """Returns Device Name."""
+        return self._device_name
+
+    @property
+    def device_id(self) -> str:
+        """Returns Device ID."""
+        return self._device_id
+
+    @property
+    def battery(self) -> float:
+        """Returns Battery (volts)."""
+        return self._battery
+
+    @property
+    def serial_number(self) -> str:
+        """Returns Device Serial Number."""
+        return self._serial_number
+
+    @property
+    def firmware_revision(self) -> str:
+        """Returns Device FW Version."""
+        return self._firmware_revision
+
+    @property
+    def hardware_revision(self) -> str:
+        """Returns Device HW Version."""
+        return self._hardware_revision

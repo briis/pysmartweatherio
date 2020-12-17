@@ -4,6 +4,15 @@ BASE_URL = "https://swd.weatherflow.com/swd/rest"
 
 DEFAULT_TIMEOUT = 10
 
+DEVICE_TYPE_AIR = "AR"
+DEVICE_TYPE_SKY = "SK"
+DEVICE_TYPE_TEMPEST = "ST"
+DEVICE_TYPES = [
+    DEVICE_TYPE_AIR,
+    DEVICE_TYPE_SKY,
+    DEVICE_TYPE_TEMPEST,
+]
+
 UNIT_TYPE_TEMP = "temperature"
 UNIT_TYPE_WIND = "wind"
 UNIT_TYPE_RAIN = "rain"

@@ -1,6 +1,7 @@
 """Define a client to interact with Weatherflow SmartWeather."""
 import asyncio
 import logging
+import json
 from typing import Optional
 from datetime import datetime
 
@@ -9,10 +10,14 @@ from aiohttp.client_exceptions import ClientError
 
 from pysmartweatherio.errors import InvalidApiKey, RequestError, ResultError
 from pysmartweatherio.helper_functions import ConversionFunctions
-from pysmartweatherio.dataclasses import StationData, ForecastDataDaily, ForecastDataHourly
+from pysmartweatherio.dataclasses import StationData, ForecastDataDaily, ForecastDataHourly, DeviceData
 from pysmartweatherio.const import (
     BASE_URL,
     DEFAULT_TIMEOUT,
+    DEVICE_TYPE_AIR,
+    DEVICE_TYPE_SKY,
+    DEVICE_TYPE_TEMPEST,
+    DEVICE_TYPES,
     UNIT_SYSTEM_METRIC,
     UNIT_TEMP_CELCIUS,
     UNIT_TEMP_FAHRENHEIT,
@@ -101,6 +106,10 @@ class SmartWeather:
         """Returns raw Daily Based station Weather Forecast."""
         return await self._raw_forecast_data(FORECAST_TYPE_DAILY, 0)
 
+    async def get_device_data(self) -> None:
+        """Returns Data for devices attached to station."""
+        return await self._device_info()
+
     async def get_units(self) -> None:
         """Returns the units used for Values."""
         if self._to_units == UNIT_SYSTEM_METRIC:
@@ -133,35 +142,47 @@ class SmartWeather:
         json_data = await self.async_request("get", endpoint)
         
         for row in json_data["stations"]:
-            items = {}
+            items = []
             name = row["name"]
             self._latitude = row["latitude"]
             self._longitude = row["longitude"]
             for item in row["devices"]:
                 if "device_type" in item:
-                    if item["device_type"] == "HB":
-                        items = {
-                            "station_name": name,
-                            "latitude": self._latitude,
-                            "longitude": self._longitude,
-                            "station_type": "AIR & SKY",
-                            "serial_number": item["serial_number"],
-                            "device_id": item["device_id"],
-                            "firmware_revision": item["firmware_revision"],
-                            "hardware_revision": item["hardware_revision"],
-                        }
-                    if item["device_type"] == "ST":
-                        items = {
-                            "station_name": name,
-                            "latitude": self._latitude,
-                            "longitude": self._longitude,
-                            "station_type": "Tempest",
-                            "serial_number": item["serial_number"],
-                            "device_id": item["device_id"],
-                            "firmware_revision": item["firmware_revision"],
-                            "hardware_revision": item["hardware_revision"],
-                        }
-                        break
+                    device = {
+                        "device_id": item["device_id"],
+                        "device_type": item["device_type"],
+                        "device_name": item["device_meta"]["name"],
+                        "station_name": name,
+                        "latitude": self._latitude,
+                        "longitude": self._longitude,
+                        "serial_number": item["serial_number"],
+                        "firmware_revision": item["firmware_revision"],
+                        "hardware_revision": item["hardware_revision"],
+                    }
+                    items.append(device)
+                    # if item["device_type"] == "HB":
+                    #     items = {
+                    #         "station_name": name,
+                    #         "latitude": self._latitude,
+                    #         "longitude": self._longitude,
+                    #         "station_type": "AIR & SKY",
+                    #         "serial_number": item["serial_number"],
+                    #         "device_id": item["device_id"],
+                    #         "firmware_revision": item["firmware_revision"],
+                    #         "hardware_revision": item["hardware_revision"],
+                    #     }
+                    # if item["device_type"] == "ST":
+                    #     items = {
+                    #         "station_name": name,
+                    #         "latitude": self._latitude,
+                    #         "longitude": self._longitude,
+                    #         "station_type": "Tempest",
+                    #         "serial_number": item["serial_number"],
+                    #         "device_id": item["device_id"],
+                    #         "firmware_revision": item["firmware_revision"],
+                    #         "hardware_revision": item["hardware_revision"],
+                    #     }
+                    #     break
 
             if items:
                 return items
@@ -342,11 +363,46 @@ class SmartWeather:
 
         return items
 
+    async def _device_info(self) -> None:
+        """Returns Device Data for attached devices to station."""
 
+        devices = await self._station_information()
+        items = []
+        for device in devices:
+            if device["device_type"] in DEVICE_TYPES:
+                endpoint = f"observations/device/{device['device_id']}?token={self._api_key}"
+                json_data = await self.async_request("get", endpoint)
+                obs = json_data["obs"][0]
+                obs_time = obs[0]
+                if device["device_type"] == DEVICE_TYPE_AIR:
+                    device_type_desc = "AIR"
+                    battery = obs[6]
+                elif device["device_type"] == DEVICE_TYPE_SKY:
+                    device_type_desc = "SKY"
+                    battery = obs[8]
+                else:
+                    device_type_desc = "TEMPEST"
+                    battery = obs[16]
+                
+                item = {
+                    "obs_time": datetime.fromtimestamp(obs_time),
+                    "device_type": device["device_type"],
+                    "device_type_desc": device_type_desc,
+                    "device_name": device["device_name"],
+                    "device_id": device["device_id"],
+                    "battery": battery,
+                    "serial_number": device["serial_number"],
+                    "firmware_revision": device["firmware_revision"],
+                    "hardware_revision": device["hardware_revision"],
+                }
+                items.append(DeviceData(item))
+        
+        return items
+
+ 
     async def _raw_forecast_data(self, forecast_type, hours_to_show) -> None:
         """Return Forecast data for the Station."""
         if self._latitude is None:
-            # _LOGGER.debug(f"LAT: {self._latitude}")
             await self._station_information()
 
         cnv = ConversionFunctions()
