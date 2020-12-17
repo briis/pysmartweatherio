@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name = 'pysmartweatherio',
   packages = ['pysmartweatherio'],
-  version = '2.0.14',
+  version = '2.1.0',
   license='MIT',
   description = 'Python Wrapper for Smart Home Weather REST API', 
   long_description=" ".join(
@@ -25,6 +25,7 @@ setup(
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
   ],
 )
 
