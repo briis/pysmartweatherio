@@ -9,10 +9,10 @@ They are both attached to a central hub, that broadcasts the data via UDP and se
 
 ## Functions
 The module exposes the following functions:<br>
-### SmartWeather(api_key, station_id, to_units, to_wind_units)
+### SmartWeather(token, station_id, to_units, to_wind_units)
 this will return a handle to the SmartWeather class and open the connection.<br>
 
-**api_key**<br>
+**token**<br>
 (string)(Required) The WeatherFlow REST API requires a API Key, but for personal use, you can use a development key, which you can [find here](https://weatherflow.github.io/SmartWeather/api/#getting-started). Please note the restrictions applied.
 
 **station_id**<br>
