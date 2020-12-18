@@ -159,29 +159,6 @@ class SmartWeather:
                         "hardware_revision": item["hardware_revision"],
                     }
                     items.append(device)
-                    # if item["device_type"] == "HB":
-                    #     items = {
-                    #         "station_name": name,
-                    #         "latitude": self._latitude,
-                    #         "longitude": self._longitude,
-                    #         "station_type": "AIR & SKY",
-                    #         "serial_number": item["serial_number"],
-                    #         "device_id": item["device_id"],
-                    #         "firmware_revision": item["firmware_revision"],
-                    #         "hardware_revision": item["hardware_revision"],
-                    #     }
-                    # if item["device_type"] == "ST":
-                    #     items = {
-                    #         "station_name": name,
-                    #         "latitude": self._latitude,
-                    #         "longitude": self._longitude,
-                    #         "station_type": "Tempest",
-                    #         "serial_number": item["serial_number"],
-                    #         "device_id": item["device_id"],
-                    #         "firmware_revision": item["firmware_revision"],
-                    #         "hardware_revision": item["hardware_revision"],
-                    #     }
-                    #     break
 
             if items:
                 return items
@@ -376,12 +353,15 @@ class SmartWeather:
                 if device["device_type"] == DEVICE_TYPE_AIR:
                     device_type_desc = "AIR"
                     battery = obs[6]
+                    station_type = "AIR & SKY"
                 elif device["device_type"] == DEVICE_TYPE_SKY:
                     device_type_desc = "SKY"
+                    station_type = "AIR & SKY"
                     battery = obs[8]
                 else:
                     device_type_desc = "TEMPEST"
                     battery = obs[16]
+                    station_type = "TEMPEST"
                 
                 item = {
                     "obs_time": datetime.fromtimestamp(obs_time),
@@ -390,6 +370,7 @@ class SmartWeather:
                     "device_name": device["device_name"],
                     "device_id": device["device_id"],
                     "battery": battery,
+                    "station_type": station_type,
                     "serial_number": device["serial_number"],
                     "firmware_revision": device["firmware_revision"],
                     "hardware_revision": device["hardware_revision"],
