@@ -28,7 +28,7 @@ this will return a handle to the SmartWeather class and open the connection.
 Default value: metric
 
 **to_wind_units**
-(string)(optional) The wind unit system to use. mps (Meter pr second) or kmh (kilometer pr hour). Will be ignored if *to_units* is imperial<br> 
+(string)(optional) The wind unit system to use. mps (Meter pr second) or kmh (kilometer pr hour). Will be ignored if *to_units* is imperial
 Default value: mps
 
 ### get_station_hardware()
@@ -47,15 +47,15 @@ Returns a Data Class with current sensor values of the associated AIR and SKY or
 * **air_density** - Current Air Density
 * **air_temperature** - Current temperature
 * **brightness** - Shows the brightness in Lux
-* **dew_point** - Dewpoint. The atmospheric temperature (varying according to pressure and humidity) below which water 
+* **dew_point** - Dewpoint. The atmospheric temperature (varying according to pressure and humidity) below which water
 * **feels_like** - How the temperature Feels Like. A combination of Heat Index and Wind Chill
 * **freezing** - Is True when *air_temperature* is below zero, else False
 * **heat_index** - A temperature measurement combining Humidity and temperature. How hot does it feel. Only used when temperature is above 26.67°C (80°F)
 * **lightning** - Is True when *lightning_strike_count* is above zero, else False
-* **lightning_strike_last_time** - The time when the last lightning strike occured. 
-* **lightning_strike_last_distance** - The distance away of the last lightning strike. 
-* **lightning_strike_count** - Shows the numbers of lightning strikes for last minute. 
-* **lightning_strike_count_last_3hr** - Shows the numbers of lightning strikes for last 3 hours. 
+* **lightning_strike_last_time** - The time when the last lightning strike occured.
+* **lightning_strike_last_distance** - The distance away of the last lightning strike.
+* **lightning_strike_count** - Shows the numbers of lightning strikes for last minute.
+* **lightning_strike_count_last_3hr** - Shows the numbers of lightning strikes for last 3 hours.
 * **precip_accum_last_1hr** - Precipitation in the last hour
 * **precip_accum_local_day** - Precipitation since midnight
 * **precip_accum_local_yesterday** - Precipitation yesterday
