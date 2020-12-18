@@ -35,13 +35,17 @@ async def main() -> None:
     start = time.time()
 
     try:
+        # devs = [{'device_id': 5357, 'serial_number': 'HB-00002036', 'device_meta': {'agl': 0.0, 'name': 'HB-00002036', 'environment': 'indoor', 'wifi_network_name': ''}, 'device_type': 'HB', 'hardware_revision': '0', 'firmware_revision': '143'}, {'device_id': 5358, 'serial_number': 'AR-00019542', 'device_meta': {'agl': 2.0, 'name': 'AR-00019542', 'environment': 'outdoor', 'wifi_network_name': ''}, 'device_type': 'AR', 'hardware_revision': '1', 'firmware_revision': '23'}, {'device_id': 58762, 'serial_number': 'SK-00001279', 'device_meta': {'agl': 1.0, 'name': 'Sky', 'environment': 'outdoor', 'wifi_network_name': ''}, 'device_settings': {'show_precip_final': True}, 'device_type': 'SK', 'hardware_revision': '1', 'firmware_revision': '43'}]
+        # tyo = "AR"
+        # if [x for x in devs if x.get('device_type')==tyo]:
+        #     print("IN")
         # _LOGGER.info("GETTING STATION NAME:")
         # station_name = await smartweather.get_station_name()
         # _LOGGER.info(f"STATION: {station_name}")
 
-        # _LOGGER.info("GETTING STATION HARDWARE:")
-        # data = await smartweather.get_station_hardware()
-        # _LOGGER.info(json.dumps(data, indent=1))
+        _LOGGER.info("GETTING STATION HARDWARE:")
+        data = await smartweather.get_station_hardware()
+        _LOGGER.info(json.dumps(data, indent=1))
 
         # _LOGGER.info("GETTING DEVICE DATA:")
         # data = await smartweather.get_device_data()
@@ -94,30 +98,30 @@ async def main() -> None:
         #         "WIND DIRECTION: " + str(row.wind_direction)
         #     )
 
-        _LOGGER.info("GETTING DAILY FORECAST DATA:")
-        data = await smartweather.get_forecast()
-        for row in data:
-            _LOGGER.info("\n" +
-                "TIME: " + str(row.timestamp) + "\n" +
-                "CONDITIONS: " + str(row.conditions) + "\n" +
-                "ICON: " + str(row.icon) + "\n" +
-                "SUNRISE: " + str(row.sunrise) + "\n" +
-                "SUNSET " + str(row.sunset) + "\n" +
-                "TEMP HIGH: " + str(row.temp_high) + "\n" +
-                "TEMP LOW: " + str(row.temp_low) + "\n" +
-                "TEMP HIGH COLOR: " + str(row.temp_high_color) + "\n" +
-                "TEMP LOW COLOR: " + str(row.temp_low_color) + "\n" +
-                "PRECIP: " + str(row.precip) + "\n" +
-                "PRECIP PROBABILITY: " + str(row.precip_probability) + "\n" +
-                "PRECIP ICON: " + str(row.precip_icon) + "\n" +
-                "PRECIP TYPE: " + str(row.precip_type) + "\n" +
-                "WIND AVG: " + str(row.wind_avg) + "\n" +
-                "WIND BEARING: " + str(row.wind_bearing) + "\n" +
-                "CUR CONDITION: " + str(row.current_condition) + "\n" +
-                "CUR ICON: " + str(row.current_icon) + "\n"
-                "TODAY HIGH: " + str(row.temp_high_today) + "\n"
-                "TODAY LOW: " + str(row.temp_low_today) + "\n"
-            )
+        # _LOGGER.info("GETTING DAILY FORECAST DATA:")
+        # data = await smartweather.get_forecast()
+        # for row in data:
+        #     _LOGGER.info("\n" +
+        #         "TIME: " + str(row.timestamp) + "\n" +
+        #         "CONDITIONS: " + str(row.conditions) + "\n" +
+        #         "ICON: " + str(row.icon) + "\n" +
+        #         "SUNRISE: " + str(row.sunrise) + "\n" +
+        #         "SUNSET " + str(row.sunset) + "\n" +
+        #         "TEMP HIGH: " + str(row.temp_high) + "\n" +
+        #         "TEMP LOW: " + str(row.temp_low) + "\n" +
+        #         "TEMP HIGH COLOR: " + str(row.temp_high_color) + "\n" +
+        #         "TEMP LOW COLOR: " + str(row.temp_low_color) + "\n" +
+        #         "PRECIP: " + str(row.precip) + "\n" +
+        #         "PRECIP PROBABILITY: " + str(row.precip_probability) + "\n" +
+        #         "PRECIP ICON: " + str(row.precip_icon) + "\n" +
+        #         "PRECIP TYPE: " + str(row.precip_type) + "\n" +
+        #         "WIND AVG: " + str(row.wind_avg) + "\n" +
+        #         "WIND BEARING: " + str(row.wind_bearing) + "\n" +
+        #         "CUR CONDITION: " + str(row.current_condition) + "\n" +
+        #         "CUR ICON: " + str(row.current_icon) + "\n"
+        #         "TODAY HIGH: " + str(row.temp_high_today) + "\n"
+        #         "TODAY LOW: " + str(row.temp_low_today) + "\n"
+        #     )
 
 
         # _LOGGER.info("GETTING HOURLY FORECAST DATA:")

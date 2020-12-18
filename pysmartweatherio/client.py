@@ -16,6 +16,7 @@ from pysmartweatherio.const import (
     DEFAULT_TIMEOUT,
     DEVICE_TYPE_AIR,
     DEVICE_TYPE_SKY,
+    DEVICE_TYPE_TEMPEST,
     DEVICE_TYPES,
     UNIT_SYSTEM_METRIC,
     UNIT_TEMP_CELCIUS,
@@ -145,6 +146,10 @@ class SmartWeather:
             name = row["name"]
             self._latitude = row["latitude"]
             self._longitude = row["longitude"]
+            if [x for x in row["devices"] if x.get('device_type')==DEVICE_TYPE_TEMPEST]:
+                station_type = "TEMPEST"
+            else:
+                station_type = "AIR & SKY"
             for item in row["devices"]:
                 if "device_type" in item:
                     device = {
@@ -152,6 +157,7 @@ class SmartWeather:
                         "device_type": item["device_type"],
                         "device_name": item["device_meta"]["name"],
                         "station_name": name,
+                        "station_type": station_type,
                         "latitude": self._latitude,
                         "longitude": self._longitude,
                         "serial_number": item["serial_number"],
