@@ -1,33 +1,39 @@
 # pySmartWeatherIO
+
 Wrapper for the WeatherFlow Smart Weather REST API. Designed to work with Home Assistant.
 
 This module communicates with a Smart Home Weather station from the company [WeatherFlow](http://weatherflow.com/smart-home-weather-stations/) using their REST API. It retrieves current weather data from the attached units. Currently they have three types of Units:
+
 * **AIR** - This unit measures Temperature, Humidity, Pressure and Lightning Strikes
 * **SKY** - This unit measures Precipitation, Wind, Illuminance and UV
 They are both attached to a central hub, that broadcasts the data via UDP and sends the data to a cloud database managed by WeatherFlow. This module retrieves the data back from the cloud database.
 * **TEMPEST** - This is a combination of the features from the AIR and SKY units, in to one single device.
 
 ## Functions
-The module exposes the following functions:<br>
+
+The module exposes the following functions:
+
 ### SmartWeather(token, station_id, to_units, to_wind_units)
-this will return a handle to the SmartWeather class and open the connection.<br>
 
-**token**<br>
-(string)(Required) The WeatherFlow REST API requires a API Key, but for personal use, you can use a development key, which you can [find here](https://weatherflow.github.io/SmartWeather/api/#getting-started). Please note the restrictions applied.
+this will return a handle to the SmartWeather class and open the connection.
 
-**station_id**<br>
-(string)(required) If you have your own Smart Weather Station, then you know your Station ID. If you don't have one, there are a lot of public stations available, and you can find one near you on [this link](https://smartweather.weatherflow.com/map). If you click on one of the stations on the map, you will see that the URL changes, locate the number right after */map/* - this is the Station ID<br>
+**token**
+(string)(Required) The WeatherFlow REST API requires a Token. If you own a WeatherFlow station you can [login with your account](https://tempestwx.com/settings/tokens) and create the token. Previously there was a common token people could use, but this has been removed now - it might still work for a while, but I don't know for how long.
 
-**to_units**<br>
-(string)(optional) The unit system to use. metric or imperial<br>
-Default value: metric<br>
+**station_id**
+(string)(required) If you have your own Smart Weather Station, then you know your Station ID. If you don't have one, there are a lot of public stations available, and you can find one near you on [this link](https://smartweather.weatherflow.com/map). If you click on one of the stations on the map, you will see that the URL changes, locate the number right after */map/* - this is the Station ID
 
-**to_wind_units**<br>
+**to_units**
+(string)(optional) The unit system to use. metric or imperial
+Default value: metric
+
+**to_wind_units**
 (string)(optional) The wind unit system to use. mps (Meter pr second) or kmh (kilometer pr hour). Will be ignored if *to_units* is imperial<br> 
-Default value: mps<br>
+Default value: mps
 
 ### get_station_hardware()
-Returns a JSON array with information about the Station Hardware.<br>
+
+Returns a JSON array with information about the Station Hardware.
 
 * **station_name** The name of the Station as set by the Owner
 * **serial_number** The serial number of the HUB Device
@@ -35,7 +41,8 @@ Returns a JSON array with information about the Station Hardware.<br>
 * **firmware_revision** The current firmware revision of the HUB Device
 
 ### get_station_data()
-Returns a Data Class with current sensor values of the associated AIR and SKY or TEMPEST modules.<br>
+
+Returns a Data Class with current sensor values of the associated AIR and SKY or TEMPEST modules.
 
 * **air_density** - Current Air Density
 * **air_temperature** - Current temperature
@@ -68,4 +75,3 @@ Returns a Data Class with current sensor values of the associated AIR and SKY or
 droplets begin to condense and dew can form
 * **wind_direction** - Wind bearing as directional text (Example: NNW)
 * **wind_gust** - Highest Wind Speed in the last minute
-
