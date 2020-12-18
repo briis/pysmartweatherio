@@ -48,13 +48,13 @@ class SmartWeather:
 
     def __init__(
         self,
-        api_key: str,
+        token: str,
         station_id: int,
         to_units: str = UNIT_SYSTEM_METRIC,
         to_wind_unit: str = UNIT_WIND_MS,
         session: Optional[ClientSession] = None,
         ):
-        self._api_key = api_key
+        self._token = token
         self._station_id = station_id
         self._to_units = to_units
         self._to_wind_unit = to_wind_unit
@@ -138,7 +138,7 @@ class SmartWeather:
 
     async def _station_information(self) -> None:
         """Return Information about the station HW."""
-        endpoint = f"stations/{self._station_id}?token={self._api_key}"
+        endpoint = f"stations/{self._station_id}?token={self._token}"
         json_data = await self.async_request("get", endpoint)
         
         for row in json_data["stations"]:
@@ -172,14 +172,14 @@ class SmartWeather:
 
     async def _station_name_by_station_id(self) -> None:
         """Return Station name from the Station ID."""
-        endpoint = f"observations/station/{self._station_id}?token={self._api_key}"
+        endpoint = f"observations/station/{self._station_id}?token={self._token}"
         json_data = await self.async_request("get", endpoint)
 
         return self._station_id if json_data.get("station_name") is None else json_data.get("station_name")
 
     async def _current_station_data(self) -> None:
         """Return current observation data for the Station."""
-        endpoint = f"observations/station/{self._station_id}?token={self._api_key}"
+        endpoint = f"observations/station/{self._station_id}?token={self._token}"
         json_data = await self.async_request("get", endpoint)
 
         station_name = json_data.get("station_name")
@@ -245,7 +245,7 @@ class SmartWeather:
             await self._station_information()
 
         cnv = ConversionFunctions()
-        endpoint = f"better_forecast?station_id={self._station_id}&token={self._api_key}&lat={self._latitude}&lon={self._longitude}"
+        endpoint = f"better_forecast?station_id={self._station_id}&token={self._token}&lat={self._latitude}&lon={self._longitude}"
         json_data = await self.async_request("get", endpoint)
         items = []
 
@@ -352,7 +352,7 @@ class SmartWeather:
         items = []
         for device in devices:
             if device["device_type"] in DEVICE_TYPES:
-                endpoint = f"observations/device/{device['device_id']}?token={self._api_key}"
+                endpoint = f"observations/device/{device['device_id']}?token={self._token}"
                 json_data = await self.async_request("get", endpoint)
                 obs = json_data["obs"][0]
                 obs_time = obs[0]
@@ -391,16 +391,8 @@ class SmartWeather:
         if self._latitude is None:
             await self._station_information()
 
-        cnv = ConversionFunctions()
-        endpoint = f"better_forecast?station_id={self._station_id}&token={self._api_key}&lat={self._latitude}&lon={self._longitude}"
+        endpoint = f"better_forecast?station_id={self._station_id}&token={self._token}&lat={self._latitude}&lon={self._longitude}"
         json_data = await self.async_request("get", endpoint)
-        items = []
-
-        # We need a few Items from the Current Conditions section
-        current_cond = json_data.get("current_conditions")
-        current_condition = current_cond["conditions"]
-        current_icon = current_cond["icon"]
-        today = datetime.now()
 
         forecast = json_data.get("forecast")
         return forecast
