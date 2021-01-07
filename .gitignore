@@ -105,3 +105,4 @@ venv.bak/
 pysmartweatherio.code-workspace
 .DS_Store
 forecast.json
+test_client.py

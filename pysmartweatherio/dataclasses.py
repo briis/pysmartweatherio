@@ -25,6 +25,7 @@ class StationData:
         self._relative_humidity = data["relative_humidity"]
         self._solar_radiation = data["solar_radiation"]
         self._station_pressure = data["station_pressure"]
+        self._sea_level_pressure = data["sea_level_pressure"]
         self._station_name = data["station_name"]
         self._timestamp = data["timestamp"]
         self._uv = data["uv"]
@@ -151,6 +152,11 @@ class StationData:
     def station_pressure(self) -> float:
         """Return Station Pressure."""
         return self._station_pressure
+        
+    @property
+    def sea_level_pressure(self) -> float:
+        """Return Sea Level Pressure."""
+        return self._sea_level_pressure
         
     @property
     def timestamp(self) -> str:

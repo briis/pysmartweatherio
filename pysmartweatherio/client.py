@@ -221,6 +221,8 @@ class SmartWeather:
                 "relative_humidity": 0 if "relative_humidity" not in row else row["relative_humidity"],
                 "station_pressure": 0 if "station_pressure" not in row else
                 await cnv.pressure(row["station_pressure"], UNIT_PRESSURE_HPA, self._to_units_pressure),
+                "sea_level_pressure": 0 if "sea_level_pressure" not in row else
+                await cnv.pressure(row["sea_level_pressure"], UNIT_PRESSURE_HPA, self._to_units_pressure),
                 "station_name": station_name,
                 "solar_radiation": 0 if "solar_radiation" not in row else row["solar_radiation"],
                 "timestamp": None if "timestamp" not in row else
