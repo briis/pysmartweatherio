@@ -207,6 +207,7 @@ class SmartWeather:
                 "lightning_strike_last_distance": 0 if "lightning_strike_last_distance" not in row else
                 await cnv.distance(row["lightning_strike_last_distance"], UNIT_DISTANCE_KM, self._to_units_distance),
                 "lightning_strike_count": 0 if "lightning_strike_count" not in row else row["lightning_strike_count"],
+                "lightning_strike_count_last_1hr": 0 if "lightning_strike_count_last_1hr" not in row else row["lightning_strike_count_last_1hr"],
                 "lightning_strike_count_last_3hr": 0 if "lightning_strike_count_last_3hr" not in row else row["lightning_strike_count_last_3hr"],
                 "precip_accum_last_1hr": 0 if "precip_accum_last_1hr" not in row else
                 await cnv.precip(row["precip_accum_last_1hr"], UNIT_PRECIP_MM, self._to_units_precip, True),
@@ -225,6 +226,7 @@ class SmartWeather:
                 await cnv.pressure(row["sea_level_pressure"], UNIT_PRESSURE_HPA, self._to_units_pressure),
                 "station_name": station_name,
                 "solar_radiation": 0 if "solar_radiation" not in row else row["solar_radiation"],
+                "pressure_trend": "" if "pressure_trend" not in row else row["pressure_trend"],
                 "timestamp": None if "timestamp" not in row else
                 await cnv.epoch_to_datetime(row["timestamp"]),
                 "uv": 0 if "uv" not in row else row["uv"],

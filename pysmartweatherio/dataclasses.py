@@ -15,6 +15,7 @@ class StationData:
         self._lightning_strike_last_time = data["lightning_strike_last_time"]
         self._lightning_strike_last_distance = data["lightning_strike_last_distance"]
         self._lightning_strike_count = data["lightning_strike_count"]
+        self._lightning_strike_count_last_1hr = data["lightning_strike_count_last_1hr"]
         self._lightning_strike_count_last_3hr = data["lightning_strike_count_last_3hr"]
         self._precip_accum_last_1hr = data["precip_accum_last_1hr"]
         self._precip_accum_local_day = data["precip_accum_local_day"]
@@ -22,6 +23,7 @@ class StationData:
         self._precip_rate = data["precip_rate"]
         self._precip_minutes_local_day = data["precip_minutes_local_day"]
         self._precip_minutes_local_yesterday = data["precip_minutes_local_yesterday"]
+        self._pressure_trend = data["pressure_trend"]
         self._relative_humidity = data["relative_humidity"]
         self._solar_radiation = data["solar_radiation"]
         self._station_pressure = data["station_pressure"]
@@ -96,6 +98,11 @@ class StationData:
         return self._lightning_strike_count
 
     @property
+    def lightning_strike_count_last_1hr(self) -> int:
+        """Return the strike count last 1hr."""
+        return self._lightning_strike_count_last_1hr
+
+    @property
     def lightning_strike_count_last_3hr(self) -> int:
         """Return the strike count last 3hr."""
         return self._lightning_strike_count_last_3hr
@@ -129,6 +136,11 @@ class StationData:
     def precip_minutes_local_yesterday(self) -> int:
         """Return Precipition Minutes Yesterday."""
         return self._precip_minutes_local_yesterday
+        
+    @property
+    def pressure_trend(self) -> int:
+        """Return the Pressure Trend."""
+        return self._pressure_trend
 
     @property
     def relative_humidity(self) -> int:

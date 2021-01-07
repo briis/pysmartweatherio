@@ -77,7 +77,9 @@ async def main() -> None:
                 "LIGHTNING TIME: " + str(row.lightning_strike_last_time) + "\n" +
                 "LIGHTNING DISTANCE: " + str(row.lightning_strike_last_distance) + "\n" +
                 "LIGHTNING COUNT: " + str(row.lightning_strike_count) + "\n" +
+                "LIGHTNING COUNT 1 HOURS: " + str(row.lightning_strike_count_last_1hr) + "\n" +
                 "LIGHTNING COUNT 3 HOURS: " + str(row.lightning_strike_count_last_3hr) + "\n" +
+                "PRESSURE TREND: " + str(row.pressure_trend) + "\n" +
                 "RAIN LAST HOUR: " + str(row.precip_accum_last_1hr) + "\n" +
                 "RAIN TODAY: " + str(row.precip_accum_local_day) + "\n" +
                 "RAIN YESTERDAY: " + str(row.precip_accum_local_yesterday) + "\n" +
