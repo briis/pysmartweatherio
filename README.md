@@ -66,6 +66,7 @@ Returns a Data Class with current sensor values of the associated AIR and SKY or
 * **relative_humidity** - Current humidity in %
 * **solar_radiation** - The current Solar Radiation measured in W/m2
 * **station_pressure** - Current barometric pressure, taking in to account the position of the station
+* **sea_level_pressure** - Current barometric pressure, at Sea Level
 * **station_name** - Name of the station as supplied by the owner
 * **timestamp** - The time of the last update
 * **uv** - The UV index
