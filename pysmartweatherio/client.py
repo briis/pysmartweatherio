@@ -249,7 +249,7 @@ class SmartWeather:
             await self._station_information()
 
         cnv = ConversionFunctions()
-        endpoint = f"better_forecast?station_id={self._station_id}&token={self._token}&lat={self._latitude}&lon={self._longitude}"
+        endpoint = f"better_forecast?station_id={self._station_id}&token={self._token}"
         json_data = await self.async_request("get", endpoint)
         items = []
 
