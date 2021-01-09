@@ -280,16 +280,6 @@ class ForecastDataDaily:
         return self._temp_low
 
     @property
-    def temp_high_color(self) -> str:
-        """Return High temperature color."""
-        return self._temp_high_color
-
-    @property
-    def temp_low_color(self) -> float:
-        """Return Low temperature color."""
-        return self._temp_low_color
-
-    @property
     def precip(self) -> float:
         """Return Precipitation."""
         return self._precip
@@ -437,16 +427,6 @@ class ForecastDataHourly:
     def wind_gust(self) -> float:
         """Return Wind Gust."""
         return self._wind_gust
-
-    @property
-    def wind_avg_color(self) -> str:
-        """Return color for Wind Average."""
-        return self._wind_avg_color
-
-    @property
-    def wind_gust_color(self) -> str:
-        """Return color for Wind Gust."""
-        return self._wind_gust_color
 
     @property
     def wind_bearing(self) -> int:
