@@ -83,7 +83,7 @@ class StationData:
         return False
         
     @property
-    def lightning_strike_last_time(self) -> str:
+    def lightning_strike_last_time(self) -> datetime:
         """Return the date and time of last strike."""
         return self._lightning_strike_last_time
 

@@ -75,3 +75,8 @@ class ConversionFunctions:
         """Converts EPOC time to Date Time String."""
         return datetime.datetime.fromtimestamp(int(value)).strftime("%Y-%m-%d %H:%M:%S")
 
+    async def epoch_to_isodatetime(self, value) -> datetime:
+        """Converts EPOC time to ISO Date Time."""
+        dt_obj = datetime.datetime.fromtimestamp(int(value))
+        return dt_obj.isoformat()
+

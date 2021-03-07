@@ -1,7 +1,6 @@
 """Define a client to interact with Weatherflow SmartWeather."""
 import asyncio
 import logging
-import json
 from typing import Optional
 from datetime import datetime
 
@@ -203,7 +202,7 @@ class SmartWeather:
                 "heat_index": 0 if "heat_index" not in row else
                 await cnv.temperature(row["heat_index"], UNIT_TEMP_CELCIUS, self._to_units_temp),
                 "lightning_strike_last_time": None if "lightning_strike_last_epoch" not in row else
-                await cnv.epoch_to_datetime(row["lightning_strike_last_epoch"]),
+                await cnv.epoch_to_isodatetime(row["lightning_strike_last_epoch"]),
                 "lightning_strike_last_distance": 0 if "lightning_strike_last_distance" not in row else
                 await cnv.distance(row["lightning_strike_last_distance"], UNIT_DISTANCE_KM, self._to_units_distance),
                 "lightning_strike_count": 0 if "lightning_strike_count" not in row else row["lightning_strike_count"],
