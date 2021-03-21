@@ -1,5 +1,7 @@
 """Constant Definitions for SmartWeather."""
 
+# pylint: disable=duplicate-code
+
 BASE_URL = "https://swd.weatherflow.com/swd/rest"
 
 DEFAULT_TIMEOUT = 10
@@ -27,7 +29,7 @@ UNIT_PRESSURE_HPA = "hpa"
 UNIT_PRESSURE_MB = "mb"
 UNIT_PRESSURE_INHG = "inhg"
 UNIT_PRECIP_MM = "mm"
-UNIT_PRECIP_IN = "in" 
+UNIT_PRECIP_IN = "in"
 UNIT_WIND_MS = "mps"
 UNIT_WIND_KMH = "kmh"
 UNIT_WIND_MPH = "mph"

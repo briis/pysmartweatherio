@@ -1,15 +1,12 @@
 """Define a client to interact with Weatherflow SmartWeather."""
 import asyncio
 import logging
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
 from aiohttp import ClientSession, ClientTimeout
 from aiohttp.client_exceptions import ClientError
 
-from pysmartweatherio.errors import InvalidApiKey, RequestError, ResultError
-from pysmartweatherio.helper_functions import ConversionFunctions
-from pysmartweatherio.dataclasses import StationData, ForecastDataDaily, ForecastDataHourly, DeviceData
 from pysmartweatherio.const import (
     BASE_URL,
     DEFAULT_TIMEOUT,
@@ -17,27 +14,35 @@ from pysmartweatherio.const import (
     DEVICE_TYPE_SKY,
     DEVICE_TYPE_TEMPEST,
     DEVICE_TYPES,
+    FORECAST_TYPE_DAILY,
+    FORECAST_TYPE_HOURLY,
+    UNIT_DISTANCE_KM,
+    UNIT_DISTANCE_MI,
+    UNIT_PRECIP_IN,
+    UNIT_PRECIP_MM,
+    UNIT_PRESSURE_HPA,
+    UNIT_PRESSURE_INHG,
+    UNIT_PRESSURE_MB,
     UNIT_SYSTEM_METRIC,
     UNIT_TEMP_CELCIUS,
     UNIT_TEMP_FAHRENHEIT,
-    UNIT_PRESSURE_MB,
-    UNIT_PRESSURE_HPA,
-    UNIT_PRESSURE_INHG,
-    UNIT_PRECIP_IN,
-    UNIT_PRECIP_MM,
-    UNIT_WIND_MS,
-    UNIT_WIND_KMH,
-    UNIT_WIND_MPH,
-    UNIT_DISTANCE_KM,
-    UNIT_DISTANCE_MI,
+    UNIT_TYPE_DISTANCE,
+    UNIT_TYPE_PRESSURE,
+    UNIT_TYPE_RAIN,
     UNIT_TYPE_TEMP,
     UNIT_TYPE_WIND,
-    UNIT_TYPE_RAIN,
-    UNIT_TYPE_PRESSURE,
-    UNIT_TYPE_DISTANCE,
-    FORECAST_TYPE_DAILY,
-    FORECAST_TYPE_HOURLY,
+    UNIT_WIND_KMH,
+    UNIT_WIND_MPH,
+    UNIT_WIND_MS,
 )
+from pysmartweatherio.dataclasses import (
+    DeviceData,
+    ForecastDataDaily,
+    ForecastDataHourly,
+    StationData,
+)
+from pysmartweatherio.errors import InvalidApiKey, RequestError, ResultError
+from pysmartweatherio.helper_functions import ConversionFunctions
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +57,7 @@ class SmartWeather:
         to_units: str = UNIT_SYSTEM_METRIC,
         to_wind_unit: str = UNIT_WIND_MS,
         session: Optional[ClientSession] = None,
-        ):
+    ):
         self._token = token
         self._station_id = station_id
         self._to_units = to_units
@@ -89,7 +94,9 @@ class SmartWeather:
         """Returns station hardware data."""
         return await self._station_information()
 
-    async def get_forecast(self, forecast_type=FORECAST_TYPE_DAILY, hours_to_show=24) -> None:
+    async def get_forecast(
+        self, forecast_type=FORECAST_TYPE_DAILY, hours_to_show=24
+    ) -> None:
         """Returns station Weather Forecast."""
         return await self._forecast_data(forecast_type, hours_to_show)
 
@@ -139,13 +146,15 @@ class SmartWeather:
         """Return Information about the station HW."""
         endpoint = f"stations/{self._station_id}?token={self._token}"
         json_data = await self.async_request("get", endpoint)
-        
+
         for row in json_data["stations"]:
             items = []
             name = row["name"]
             self._latitude = row["latitude"]
             self._longitude = row["longitude"]
-            if [x for x in row["devices"] if x.get('device_type')==DEVICE_TYPE_TEMPEST]:
+            if [
+                x for x in row["devices"] if x.get("device_type") == DEVICE_TYPE_TEMPEST
+            ]:
                 station_type = "TEMPEST"
             else:
                 station_type = "AIR & SKY"
@@ -168,13 +177,16 @@ class SmartWeather:
             if items:
                 return items
 
-
     async def _station_name_by_station_id(self) -> None:
         """Return Station name from the Station ID."""
         endpoint = f"observations/station/{self._station_id}?token={self._token}"
         json_data = await self.async_request("get", endpoint)
 
-        return self._station_id if json_data.get("station_name") is None else json_data.get("station_name")
+        return (
+            self._station_id
+            if json_data.get("station_name") is None
+            else json_data.get("station_name")
+        )
 
     async def _current_station_data(self) -> None:
         """Return current observation data for the Station."""
@@ -188,54 +200,128 @@ class SmartWeather:
         observations = json_data.get("obs")
         if observations is None:
             observations = {"nodata": "NoData"}
-        
+
         for row in observations:
             item = {
                 "air_density": 0 if "air_density" not in row else row["air_density"],
-                "air_temperature": 0 if "air_temperature" not in row else
-                await cnv.temperature(row["air_temperature"], UNIT_TEMP_CELCIUS, self._to_units_temp),
+                "air_temperature": 0
+                if "air_temperature" not in row
+                else await cnv.temperature(
+                    row["air_temperature"], UNIT_TEMP_CELCIUS, self._to_units_temp
+                ),
                 "brightness": 0 if "brightness" not in row else row["brightness"],
-                "dew_point": 0 if "dew_point" not in row else
-                await cnv.temperature(row["dew_point"], UNIT_TEMP_CELCIUS, self._to_units_temp),
-                "feels_like": 0 if "feels_like" not in row else
-                await cnv.temperature(row["feels_like"], UNIT_TEMP_CELCIUS, self._to_units_temp),
-                "heat_index": 0 if "heat_index" not in row else
-                await cnv.temperature(row["heat_index"], UNIT_TEMP_CELCIUS, self._to_units_temp),
-                "lightning_strike_last_time": None if "lightning_strike_last_epoch" not in row else
-                await cnv.epoch_to_isodatetime(row["lightning_strike_last_epoch"]),
-                "lightning_strike_last_distance": 0 if "lightning_strike_last_distance" not in row else
-                await cnv.distance(row["lightning_strike_last_distance"], UNIT_DISTANCE_KM, self._to_units_distance),
-                "lightning_strike_count": 0 if "lightning_strike_count" not in row else row["lightning_strike_count"],
-                "lightning_strike_count_last_1hr": 0 if "lightning_strike_count_last_1hr" not in row else row["lightning_strike_count_last_1hr"],
-                "lightning_strike_count_last_3hr": 0 if "lightning_strike_count_last_3hr" not in row else row["lightning_strike_count_last_3hr"],
-                "precip_accum_last_1hr": 0 if "precip_accum_last_1hr" not in row else
-                await cnv.precip(row["precip_accum_last_1hr"], UNIT_PRECIP_MM, self._to_units_precip, True),
-                "precip_accum_local_day": 0 if "precip_accum_local_day" not in row else
-                await cnv.precip(row["precip_accum_local_day"], UNIT_PRECIP_MM, self._to_units_precip, True),
-                "precip_accum_local_yesterday": 0 if "precip_accum_local_yesterday" not in row else
-                await cnv.precip(row["precip_accum_local_yesterday"], UNIT_PRECIP_MM, self._to_units_precip, True),
-                "precip_rate": 0 if "precip" not in row else
-                await cnv.precip(row["precip"], UNIT_PRECIP_MM, self._to_units_precip, True) * 60,
-                "precip_minutes_local_day": 0 if "precip_minutes_local_day" not in row else row["precip_minutes_local_day"],
-                "precip_minutes_local_yesterday": 0 if "precip_minutes_local_yesterday" not in row else row["precip_minutes_local_yesterday"],
-                "relative_humidity": 0 if "relative_humidity" not in row else row["relative_humidity"],
-                "station_pressure": 0 if "station_pressure" not in row else
-                await cnv.pressure(row["station_pressure"], UNIT_PRESSURE_HPA, self._to_units_pressure),
-                "sea_level_pressure": 0 if "sea_level_pressure" not in row else
-                await cnv.pressure(row["sea_level_pressure"], UNIT_PRESSURE_HPA, self._to_units_pressure),
+                "dew_point": 0
+                if "dew_point" not in row
+                else await cnv.temperature(
+                    row["dew_point"], UNIT_TEMP_CELCIUS, self._to_units_temp
+                ),
+                "feels_like": 0
+                if "feels_like" not in row
+                else await cnv.temperature(
+                    row["feels_like"], UNIT_TEMP_CELCIUS, self._to_units_temp
+                ),
+                "heat_index": 0
+                if "heat_index" not in row
+                else await cnv.temperature(
+                    row["heat_index"], UNIT_TEMP_CELCIUS, self._to_units_temp
+                ),
+                "lightning_strike_last_time": None
+                if "lightning_strike_last_epoch" not in row
+                else await cnv.epoch_to_isodatetime(row["lightning_strike_last_epoch"]),
+                "lightning_strike_last_distance": 0
+                if "lightning_strike_last_distance" not in row
+                else await cnv.distance(
+                    row["lightning_strike_last_distance"],
+                    UNIT_DISTANCE_KM,
+                    self._to_units_distance,
+                ),
+                "lightning_strike_count": 0
+                if "lightning_strike_count" not in row
+                else row["lightning_strike_count"],
+                "lightning_strike_count_last_1hr": 0
+                if "lightning_strike_count_last_1hr" not in row
+                else row["lightning_strike_count_last_1hr"],
+                "lightning_strike_count_last_3hr": 0
+                if "lightning_strike_count_last_3hr" not in row
+                else row["lightning_strike_count_last_3hr"],
+                "precip_accum_last_1hr": 0
+                if "precip_accum_last_1hr" not in row
+                else await cnv.precip(
+                    row["precip_accum_last_1hr"],
+                    UNIT_PRECIP_MM,
+                    self._to_units_precip,
+                    True,
+                ),
+                "precip_accum_local_day": 0
+                if "precip_accum_local_day" not in row
+                else await cnv.precip(
+                    row["precip_accum_local_day"],
+                    UNIT_PRECIP_MM,
+                    self._to_units_precip,
+                    True,
+                ),
+                "precip_accum_local_yesterday": 0
+                if "precip_accum_local_yesterday" not in row
+                else await cnv.precip(
+                    row["precip_accum_local_yesterday"],
+                    UNIT_PRECIP_MM,
+                    self._to_units_precip,
+                    True,
+                ),
+                "precip_rate": 0
+                if "precip" not in row
+                else await cnv.precip(
+                    row["precip"], UNIT_PRECIP_MM, self._to_units_precip, True
+                )
+                * 60,
+                "precip_minutes_local_day": 0
+                if "precip_minutes_local_day" not in row
+                else row["precip_minutes_local_day"],
+                "precip_minutes_local_yesterday": 0
+                if "precip_minutes_local_yesterday" not in row
+                else row["precip_minutes_local_yesterday"],
+                "relative_humidity": 0
+                if "relative_humidity" not in row
+                else row["relative_humidity"],
+                "station_pressure": 0
+                if "station_pressure" not in row
+                else await cnv.pressure(
+                    row["station_pressure"], UNIT_PRESSURE_HPA, self._to_units_pressure
+                ),
+                "sea_level_pressure": 0
+                if "sea_level_pressure" not in row
+                else await cnv.pressure(
+                    row["sea_level_pressure"],
+                    UNIT_PRESSURE_HPA,
+                    self._to_units_pressure,
+                ),
                 "station_name": station_name,
-                "solar_radiation": 0 if "solar_radiation" not in row else row["solar_radiation"],
-                "pressure_trend": "" if "pressure_trend" not in row else row["pressure_trend"],
-                "timestamp": None if "timestamp" not in row else
-                await cnv.epoch_to_datetime(row["timestamp"]),
+                "solar_radiation": 0
+                if "solar_radiation" not in row
+                else row["solar_radiation"],
+                "pressure_trend": ""
+                if "pressure_trend" not in row
+                else row["pressure_trend"],
+                "timestamp": None
+                if "timestamp" not in row
+                else await cnv.epoch_to_datetime(row["timestamp"]),
                 "uv": 0 if "uv" not in row else row["uv"],
-                "wind_avg": 0 if "wind_avg" not in row else
-                await cnv.wind(row["wind_avg"], UNIT_WIND_MS, self._to_units_wind),
-                "wind_bearing": 0 if "wind_direction" not in row else row["wind_direction"],
-                "wind_chill": 0 if "wind_chill" not in row else
-                await cnv.temperature(row["wind_chill"], UNIT_TEMP_CELCIUS, self._to_units_temp),
-                "wind_gust": 0 if "wind_gust" not in row else
-                await cnv.wind(row["wind_gust"], UNIT_WIND_MS, self._to_units_wind),
+                "wind_avg": 0
+                if "wind_avg" not in row
+                else await cnv.wind(row["wind_avg"], UNIT_WIND_MS, self._to_units_wind),
+                "wind_bearing": 0
+                if "wind_direction" not in row
+                else row["wind_direction"],
+                "wind_chill": 0
+                if "wind_chill" not in row
+                else await cnv.temperature(
+                    row["wind_chill"], UNIT_TEMP_CELCIUS, self._to_units_temp
+                ),
+                "wind_gust": 0
+                if "wind_gust" not in row
+                else await cnv.wind(
+                    row["wind_gust"], UNIT_WIND_MS, self._to_units_wind
+                ),
             }
             items.append(StationData(item))
 
@@ -275,11 +361,11 @@ class SmartWeather:
                 precip = 0
                 wind_avg = []
                 wind_bearing = []
-                for hourly in forecast['hourly']:
-                    if hourly['local_day'] == row['day_num']:
+                for hourly in forecast["hourly"]:
+                    if hourly["local_day"] == row["day_num"]:
                         precip += hourly["precip"]
-                        wind_avg.append(hourly['wind_avg'])
-                        wind_bearing.append(hourly['wind_direction'])
+                        wind_avg.append(hourly["wind_avg"])
+                        wind_bearing.append(hourly["wind_direction"])
                 sum_wind_avg = sum(wind_avg) / len(wind_avg)
                 sum_wind_bearing = sum(wind_bearing) / len(wind_bearing)
 
@@ -292,11 +378,15 @@ class SmartWeather:
                     "sunset": datetime.fromtimestamp(row["sunset"]),
                     "air_temp_high": row["air_temp_high"],
                     "air_temp_low": row["air_temp_low"],
-                    "precip": await cnv.precip(precip, UNIT_PRECIP_MM, self._to_units_precip),
+                    "precip": await cnv.precip(
+                        precip, UNIT_PRECIP_MM, self._to_units_precip
+                    ),
                     "precip_probability": row["precip_probability"],
                     "precip_icon": row.get("precip_icon", ""),
                     "precip_type": row.get("precip_type", ""),
-                    "wind_avg": await cnv.wind(sum_wind_avg, UNIT_WIND_MS, self._to_units_wind),
+                    "wind_avg": await cnv.wind(
+                        sum_wind_avg, UNIT_WIND_MS, self._to_units_wind
+                    ),
                     "wind_bearing": sum_wind_bearing,
                     "current_condition": current_condition,
                     "current_icon": current_icon,
@@ -318,14 +408,24 @@ class SmartWeather:
                     "conditions": row["conditions"],
                     "icon": row["icon"],
                     "air_temperature": row["air_temperature"],
-                    "sea_level_pressure": await cnv.pressure(row["sea_level_pressure"], UNIT_PRESSURE_MB, self._to_units_pressure),
+                    "sea_level_pressure": await cnv.pressure(
+                        row["sea_level_pressure"],
+                        UNIT_PRESSURE_MB,
+                        self._to_units_pressure,
+                    ),
                     "relative_humidity": row["relative_humidity"],
-                    "precip": await cnv.precip(row["precip"], UNIT_PRECIP_MM, self._to_units_precip),
+                    "precip": await cnv.precip(
+                        row["precip"], UNIT_PRECIP_MM, self._to_units_precip
+                    ),
                     "precip_probability": row["precip_probability"],
                     "precip_icon": row.get("precip_icon", ""),
                     "precip_type": row.get("precip_type", ""),
-                    "wind_avg": await cnv.wind(row["wind_avg"], UNIT_WIND_MS, self._to_units_wind),
-                    "wind_gust": await cnv.wind(row["wind_gust"], UNIT_WIND_MS, self._to_units_wind),
+                    "wind_avg": await cnv.wind(
+                        row["wind_avg"], UNIT_WIND_MS, self._to_units_wind
+                    ),
+                    "wind_gust": await cnv.wind(
+                        row["wind_gust"], UNIT_WIND_MS, self._to_units_wind
+                    ),
                     "wind_direction": row["wind_direction"],
                     "wind_direction_cardinal": row["wind_direction_cardinal"],
                     "uv": row["uv"],
@@ -350,7 +450,9 @@ class SmartWeather:
         items = []
         for device in devices:
             if device["device_type"] in DEVICE_TYPES:
-                endpoint = f"observations/device/{device['device_id']}?token={self._token}"
+                endpoint = (
+                    f"observations/device/{device['device_id']}?token={self._token}"
+                )
                 json_data = await self.async_request("get", endpoint)
                 obs = json_data["obs"][0]
                 obs_time = obs[0]
@@ -366,7 +468,7 @@ class SmartWeather:
                     device_type_desc = "TEMPEST"
                     battery = obs[16]
                     station_type = "TEMPEST"
-                
+
                 item = {
                     "obs_time": datetime.fromtimestamp(obs_time),
                     "device_type": device["device_type"],
@@ -380,11 +482,10 @@ class SmartWeather:
                     "hardware_revision": device["hardware_revision"],
                 }
                 items.append(DeviceData(item))
-        
+
         return items
 
- 
-    async def _raw_forecast_data(self, forecast_type, hours_to_show) -> None:
+    async def _raw_forecast_data(self) -> None:
         """Return Forecast data for the Station."""
         if self._latitude is None:
             await self._station_information()
@@ -406,23 +507,24 @@ class SmartWeather:
             session = ClientSession(timeout=ClientTimeout(total=DEFAULT_TIMEOUT))
 
         try:
-            async with session.request(
-                method, f"{BASE_URL}/{endpoint}"
-            ) as resp:
+            async with session.request(method, f"{BASE_URL}/{endpoint}") as resp:
                 resp.raise_for_status()
                 data = await resp.json()
                 return data
-        except asyncio.TimeoutError:
-            raise RequestError("Request to endpoint timed out: {endpoint}")
+        except asyncio.TimeoutError as timeout_err:
+            raise RequestError(
+                "Request to endpoint timed out: {endpoint}"
+            ) from timeout_err
         except ClientError as err:
             if "Unauthorized" in str(err):
-                raise InvalidApiKey("Your API Key is invalid or does not support this operation")
-            elif "Not Found" in str(err):
-                raise ResultError("The Station ID does not exist")
-            else:
-                raise RequestError(
-                    f"Error requesting data from {endpoint}: {err}"
-                ) from None
+                raise InvalidApiKey(
+                    "Your API Key is invalid or does not support this operation"
+                ) from err
+            if "Not Found" in str(err):
+                raise ResultError("The Station ID does not exist") from err
+            raise RequestError(
+                f"Error requesting data from {endpoint}: {err}"
+            ) from None
 
         finally:
             if not use_running_session:

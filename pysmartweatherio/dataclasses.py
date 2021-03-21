@@ -1,6 +1,9 @@
 """Defines the Data Classes used."""
-from datetime import datetime as dt
 import datetime
+from datetime import datetime as dt
+
+# pylint: disable=too-many-instance-attributes, too-many-public-methods
+
 
 class StationData:
     """A representation of all data available for a specific Station ID."""
@@ -81,7 +84,7 @@ class StationData:
             return True
 
         return False
-        
+
     @property
     def lightning_strike_last_time(self) -> datetime:
         """Return the date and time of last strike."""
@@ -106,17 +109,17 @@ class StationData:
     def lightning_strike_count_last_3hr(self) -> int:
         """Return the strike count last 3hr."""
         return self._lightning_strike_count_last_3hr
-        
+
     @property
     def precip_accum_last_1hr(self) -> float:
         """Return Precipition for the Last Hour."""
         return self._precip_accum_last_1hr
-        
+
     @property
     def precip_accum_local_day(self) -> float:
         """Return Precipition for the Day."""
         return self._precip_accum_local_day
-        
+
     @property
     def precip_accum_local_yesterday(self) -> float:
         """Return Precipition for Yesterday."""
@@ -126,17 +129,17 @@ class StationData:
     def precip_rate(self) -> float:
         """Return current precipitaion rate."""
         return self._precip_rate
-        
+
     @property
     def precip_minutes_local_day(self) -> int:
         """Return Precipition Minutes Today."""
         return self._precip_minutes_local_day
-        
+
     @property
     def precip_minutes_local_yesterday(self) -> int:
         """Return Precipition Minutes Yesterday."""
         return self._precip_minutes_local_yesterday
-        
+
     @property
     def pressure_trend(self) -> int:
         """Return the Pressure Trend."""
@@ -159,27 +162,27 @@ class StationData:
     def solar_radiation(self) -> int:
         """Return Solar Radiation."""
         return self._solar_radiation
-        
+
     @property
     def station_pressure(self) -> float:
         """Return Station Pressure."""
         return self._station_pressure
-        
+
     @property
     def sea_level_pressure(self) -> float:
         """Return Sea Level Pressure."""
         return self._sea_level_pressure
-        
+
     @property
     def timestamp(self) -> str:
         """Return Data Timestamp."""
         return self._timestamp
-        
+
     @property
     def station_name(self) -> str:
         """Return Station Name."""
         return self._station_name
-        
+
     @property
     def uv(self) -> float:
         """Return UV Index."""
@@ -189,7 +192,7 @@ class StationData:
     def wind_avg(self) -> float:
         """Return Wind Speed Average."""
         return self._wind_avg
-        
+
     @property
     def wind_bearing(self) -> int:
         """Return Wind Bearing as Degree."""
@@ -204,13 +207,32 @@ class StationData:
     def wind_gust(self) -> float:
         """Return Wind Gust Speed."""
         return self._wind_gust
-        
+
     @property
     def wind_direction(self) -> str:
         """Return Wind Direction Symbol."""
-        direction_array = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW","N"]
+        direction_array = [
+            "N",
+            "NNE",
+            "NE",
+            "ENE",
+            "E",
+            "ESE",
+            "SE",
+            "SSE",
+            "S",
+            "SSW",
+            "SW",
+            "WSW",
+            "W",
+            "WNW",
+            "NW",
+            "NNW",
+            "N",
+        ]
         direction = direction_array[int((self._wind_bearing + 11.25) / 22.5)]
         return direction
+
 
 class ForecastDataDaily:
     """A representation of Day Based Forecast Weather Data."""
@@ -232,8 +254,8 @@ class ForecastDataDaily:
         self._wind_bearing = data["wind_bearing"]
         self._current_condition = data["current_condition"]
         self._current_icon = data["current_icon"]
-        self._temp_high_today= data["temp_high_today"]
-        self._temp_low_today= data["temp_low_today"]
+        self._temp_high_today = data["temp_high_today"]
+        self._temp_low_today = data["temp_low_today"]
 
     @property
     def timestamp(self) -> dt:
@@ -283,7 +305,7 @@ class ForecastDataDaily:
     def precip(self) -> float:
         """Return Precipitation."""
         return self._precip
-        
+
     @property
     def precip_probability(self) -> int:
         """Precipitation Probability."""
@@ -302,7 +324,7 @@ class ForecastDataDaily:
     @property
     def wind_avg(self) -> float:
         """Return Wind Speed Average."""
-        return round(self._wind_avg,2)
+        return round(self._wind_avg, 2)
 
     @property
     def wind_bearing(self) -> int:
@@ -333,6 +355,7 @@ class ForecastDataDaily:
         """Return Low temperature for current day."""
         return self._temp_low_today
 
+
 class ForecastDataHourly:
     """A representation of Hour Based Forecast Weather Data."""
 
@@ -356,8 +379,8 @@ class ForecastDataHourly:
         self._feels_like = data["feels_like"]
         self._current_condition = data["current_condition"]
         self._current_icon = data["current_icon"]
-        self._temp_high_today= data["temp_high_today"]
-        self._temp_low_today= data["temp_low_today"]
+        self._temp_high_today = data["temp_high_today"]
+        self._temp_low_today = data["temp_low_today"]
 
     @property
     def timestamp(self) -> dt:
@@ -402,7 +425,7 @@ class ForecastDataHourly:
     def precip(self) -> float:
         """Return Precipitation."""
         return self._precip
-        
+
     @property
     def precip_probability(self) -> int:
         """Precipitation Probability."""
@@ -439,11 +462,6 @@ class ForecastDataHourly:
         return self._wind_direction
 
     @property
-    def wind_direction_icon(self) -> str:
-        """Return Wind Direction Icon."""
-        return self._wind_direction_icon
-
-    @property
     def uv(self) -> float:
         """Return UV Index."""
         return self._uv
@@ -476,6 +494,7 @@ class ForecastDataHourly:
     def temp_low_today(self) -> float:
         """Return Low temperature for current day."""
         return self._temp_low_today
+
 
 class DeviceData:
     """A representation of Devices attached to the station."""
