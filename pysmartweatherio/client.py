@@ -342,7 +342,7 @@ class SmartWeather:
         current_cond = json_data.get("current_conditions")
         current_condition = current_cond["conditions"]
         current_icon = current_cond["icon"]
-        today = datetime.now()
+        today = datetime.date(datetime.now())
 
         forecast = json_data.get("forecast")
 
@@ -353,7 +353,7 @@ class SmartWeather:
         if forecast_type == FORECAST_TYPE_DAILY:
             for row in forecast[FORECAST_TYPE_DAILY]:
                 # Skip over past forecasts - seems the API sometimes returns old forecasts
-                forecast_time = datetime.fromtimestamp(row["day_start_local"])
+                forecast_time = datetime.date(datetime.fromtimestamp(row["day_start_local"]))
                 if today > forecast_time:
                     continue
 
