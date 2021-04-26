@@ -399,7 +399,7 @@ class SmartWeather:
             for row in forecast[FORECAST_TYPE_HOURLY]:
                 # Skip over past forecasts - seems the API sometimes returns old forecasts
                 forecast_time = datetime.fromtimestamp(row["time"])
-                if today > forecast_time:
+                if datetime.now() > forecast_time:
                     continue
 
                 item = {
