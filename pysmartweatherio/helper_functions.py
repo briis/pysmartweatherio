@@ -45,7 +45,7 @@ class ConversionFunctions:
             from_unit = UNIT_PRESSURE_MB
 
         if from_unit == UNIT_PRESSURE_MB:
-            return value if to_unit == UNIT_PRESSURE_HPA else value * 0.030
+            return value if to_unit == UNIT_PRESSURE_HPA else value * 0.02953
         return value if to_unit == UNIT_PRESSURE_INHG else value * 33.86
 
     async def wind(self, value, from_unit, to_unit) -> float:
