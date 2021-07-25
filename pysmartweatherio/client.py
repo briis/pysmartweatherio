@@ -353,7 +353,9 @@ class SmartWeather:
         if forecast_type == FORECAST_TYPE_DAILY:
             for row in forecast[FORECAST_TYPE_DAILY]:
                 # Skip over past forecasts - seems the API sometimes returns old forecasts
-                forecast_time = datetime.date(datetime.fromtimestamp(row["day_start_local"]))
+                forecast_time = datetime.date(
+                    datetime.fromtimestamp(row["day_start_local"])
+                )
                 if today > forecast_time:
                     continue
 
@@ -451,7 +453,8 @@ class SmartWeather:
         for device in devices:
             if device["device_type"] in DEVICE_TYPES:
                 endpoint = (
-                    f"observations/device/{device['device_id']}?token={self._token}"
+                    # f"observations/device/{device['device_id']}?token={self._token}"
+                    f"observations/?device_id={device['device_id']}&token={self._token}"
                 )
                 json_data = await self.async_request("get", endpoint)
                 obs = json_data["obs"][0]
