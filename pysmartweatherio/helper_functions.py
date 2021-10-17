@@ -31,7 +31,7 @@ class ConversionFunctions:
             return (
                 round(value, 1)
                 if to_unit == UNIT_TEMP_CELCIUS
-                else round((value * 9 / 5) + 32, 2)
+                else round((value * 9 / 5) + 32, 1)
             )
         return (
             round(value, 2)
