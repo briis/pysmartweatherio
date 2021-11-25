@@ -1,5 +1,7 @@
 # pySmartWeatherIO
 
+> This project has been Archived and is no longer maintained. It has been replaced by [`pyweatherflowrest`](https://github.com/briis/pyweatherflowrest) which will be the new wrapper for the WeatherFlow Rest API.
+
 Wrapper for the WeatherFlow Smart Weather REST API. Designed to work with Home Assistant.
 
 This module communicates with a Smart Home Weather station from the company [WeatherFlow](http://weatherflow.com/smart-home-weather-stations/) using their REST API. It retrieves current weather data from the attached units. Currently they have three types of Units:
